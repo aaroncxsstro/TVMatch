@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+
+  python_app:
+    build: 
+      context: ./tvmatcher_scrapper
+      dockerfile: Dockerfile-Scrapper
+    depends_on:
+      - mongodb
+    environment:
+      - OMDB_API_KEY=a1af39b  
+      - PROVIDERS=netflix,amazon-prime-video,disney-plus,hbo-max,movistar-plus
+
+  spring_app:
+    build: 
+      context: ./Java-workspace/TVMatcher_Spring
+      dockerfile: Dockerfile-spring
+    container_name: spring_app
+    depends_on:
+      - mongodb
+    ports:
+      - "8080:8080" #quitar
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/TVMatchDB
+
+  react_app:
+    build:
+      context: ./tvmatcher-react
+      dockerfile: Dockerfile-react
+    container_name: react_app
+    ports:
+      - "3000:80"

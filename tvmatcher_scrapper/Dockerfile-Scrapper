@@ -1,0 +1,27 @@
+# Use the latest Python image as base
+FROM python:latest
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy all Python files to /app in the image
+COPY . .
+
+# Set the MongoDB connection string as an environment variable
+ENV MONGODB_CONNECTION_STRING="mongodb://mongodb:27017/"
+
+# Install cron and other dependencies
+RUN apt-get update && apt-get -y install cron \
+    && pip install -r requirements.txt
+
+# Add crontab file to the container
+ADD crontab /etc/cron.d/crontab
+
+# Give execution rights on the cron job
+RUN chmod 0644 /etc/cron.d/crontab
+
+# Apply cron job
+RUN crontab /etc/cron.d/crontab
+
+# Run the cron job in the foreground
+CMD ["cron", "-f"]
