@@ -1,0 +1,159 @@
+@media only screen and (max-width: 900px) {
+.serie-detail-container {
+    display: flex;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+  }
+  
+  .serie-detail-header {
+    display: flex;
+    align-items: center;
+  }
+  
+  .serie-detail-header h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+  }
+  
+  .serie-detail-header h2 {
+    font-size: 18px;
+    color: #666;
+    margin-top: 0;
+  }
+  
+  .serie-detail-content {
+    display: flex;
+    flex-direction: column;
+    flex: 2;
+    padding: 20px;
+    border-radius: 8px; 
+    background-color: white; 
+    position: relative; 
+    margin-bottom: 50px;
+  }
+  
+  .serie-detail-info {
+    margin-top: 20px;
+  }
+  
+  .serie-detail-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .serie-detail-info ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .serie-detail-info li {
+    margin-bottom: 5px;
+  }
+  
+  .serie-detail-poster {
+    flex: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  
+  .serie-detail-poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px; 
+    filter: blur(5px);
+  }
+
+  .parent-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    padding-bottom: 15%;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+.serie-detail-container {
+    display: flex;
+    margin: 20px;
+    margin-bottom: 100px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    
+  }
+
+  .serie-detail-header {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
+  .serie-detail-header h1 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+  }
+  
+  .serie-detail-header h2 {
+    font-size: 18px;
+    color: #666;
+    margin-top: 0;
+  }
+  
+  .serie-detail-content {
+    display: flex;
+    flex-direction: column;
+    flex: 4;
+    margin-left: 20px; 
+  }
+  
+  .serie-detail-info {
+    margin-top: 20px;
+  }
+  
+  .serie-detail-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .serie-detail-info ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .serie-detail-info li {
+    margin-bottom: 5px;
+  }
+  
+  .serie-detail-poster {
+    flex: 1;
+  }
+  
+  .serie-detail-poster img {
+    width: 300px;
+    border-radius: 8px;
+    
+  }
+
+  .parent-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; 
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+  }
+}
+

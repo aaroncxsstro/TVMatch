@@ -1,0 +1,152 @@
+.cancel-button-div {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+}
+
+.create-page {
+  margin-bottom: 150px;
+}
+.game-configuration-container {
+  text-align: center;
+  margin-top: 80px; 
+}
+
+.game-configuration-container h1 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  color: #92400e;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.options-header{
+  margin-top:50px
+}
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 23%;
+}
+
+.option label {
+  color: #92400e;
+}
+
+.option-year {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  justify-content: space-between;
+  padding: 10px 23%;
+}
+
+.option-year label {
+  color: #92400e;
+  align-self: flex-start;
+}
+
+.option input[type="checkbox"] {
+  appearance: none;
+  width: 20px; 
+  height: 20px;
+  border-radius: 4px; 
+  border: 2px solid #92400e; 
+  background-color: #fff; 
+  cursor: pointer; 
+}
+
+.option-year input[type="number"] {
+  width: 30px;
+  border: 2px solid #92400e; 
+  border-radius: 4px; 
+  background-color: #fff; 
+  cursor: pointer;
+  text-align: center;
+}
+
+.option input[type="checkbox"]:checked {
+  background-color: #92400e; 
+  border-color: #92400e; 
+}
+
+.year-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px; /* Agregamos margen arriba para separar de los géneros */
+}
+
+.year-inputs > div {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.year-inputs > div label {
+  margin-right: 10px;
+}
+
+.year-inputs input[type="number"] {
+  width: 80px;
+  padding: 8px;
+  border: 2px solid #92400e;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  text-align: center;
+}
+
+.year-inputs button {
+  background-color: #92400e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-left: 5px;
+  cursor: pointer;
+}
+
+.year-inputs button:hover {
+  background-color: #a65e2f;
+}
+
+.year-inputs .from-to {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 20px; 
+}
+
+.game-creation {
+  margin-top: 70px;
+}
+
+
+@media (min-width: 768px) {
+  .cancel-button-div {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+  }
+  
+  .options-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .options-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  .platform-configuration-container,
+  .gender-configuration-container {
+    width: 100%; 
+  }
+}
