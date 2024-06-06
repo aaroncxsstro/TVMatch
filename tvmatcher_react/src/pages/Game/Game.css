@@ -1,0 +1,220 @@
+.game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.series-card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 20px;
+  width: 300px;
+  position: relative;
+  z-index: 2; /* Asegúrate de que el card esté por encima del overlay */
+}
+
+.series-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+  
+}
+
+.series-title {
+  font-size: 1.2em;
+  margin: 15px 0;
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 10px;
+}
+
+.button-group button {
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+
+.series-info-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 10000; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.series-info {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.overlay-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.partial-matches-overlay {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow: auto;
+  z-index: 9998; 
+}
+
+.partial-matches {
+  position: relative;
+}
+
+.partial-matches h2 {
+  font-size: 1.5em;
+  margin-bottom: 20px;
+}
+
+.partial-match-container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 20px;
+}
+
+.partial-match {
+  flex: 0 0 auto;
+  margin-right: 10px;
+  cursor: pointer; 
+}
+
+.partial-match img {
+  width: 150px; 
+  height: 200px; 
+  object-fit: cover; 
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.partial-match p {
+  font-size: 0.9em;
+  margin: 0;
+  text-align: center;
+}
+
+.series-info-large {
+  font-size: 1.8em;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.continue-button {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.likes-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.like {
+  display: flex;
+  align-items: center;
+  background-color: #e7283b;
+  color: white;
+  border-radius: 10px;
+  padding: 5px 10px;
+  margin-right: 10px;
+}
+
+.like-name {
+  font-size: 1em;
+}
+
+.series-card {
+  /* Agrega propiedades de estilo para la tarjeta de serie */
+  position: relative;
+  transition: transform 0.3s ease; /* Transición suave para el deslizamiento */
+}
+
+.swipe-left {
+  transform: translateX(-100%); /* Desliza hacia la izquierda */
+}
+
+.swipe-right {
+  transform: translateX(100%); /* Desliza hacia la derecha */
+}
+
+.swipe-curtain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.swipe-curtain.like {
+  background-color: rgba(0, 0, 255, 0.5); /* Azul */
+}
+
+.swipe-curtain.dislike {
+  background-color: rgba(255, 0, 0, 0.5); /* Rojo */
+}
+
+.star-icon {
+  position: absolute;
+  z-index: 50;
+  cursor: pointer;
+  top: 18px;
+  right: 20px;
+  font-size: 34px; 
+}
+
+.continue-button button{
+  margin: 10px
+}

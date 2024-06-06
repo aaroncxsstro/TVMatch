@@ -12,4 +12,6 @@ public interface PlatformService {
     SeriesModel getShowById(String id);
 
     List<SeriesModel> getFilteredShows(List<String> platforms, List<String> genres, int startYear, int endYear, boolean isKidModeChecked);
+
+    
 }

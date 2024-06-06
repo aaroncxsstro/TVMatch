@@ -1,0 +1,47 @@
+@import url(https://pro.fontawesome.com/releases/v5.10.0/css/all.css);
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;800&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+.bottom-nav-container {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hover\:w-full:hover {
+    width: 100%;
+}
+
+.group:hover .group-hover\:w-full {
+    width: 100%;
+}
+
+.group:hover .group-hover\:inline-block {
+    display: inline-block;
+}
+
+.group:hover .group-hover\:flex-grow {
+    flex-grow: 1;
+}
+
+@media only screen and (max-device-width: 812px) {
+    .bottom-nav-container {
+        padding-bottom: 34px; 
+    }
+}
+
+@media only screen and (max-device-width: 896px) {
+    .bottom-nav-container {
+        padding-bottom: 24px; 
+    }
+}
+
+@media only screen and (max-device-width: 926px) {
+    .bottom-nav-container {
+        padding-bottom: 28px; 
+    }
+}

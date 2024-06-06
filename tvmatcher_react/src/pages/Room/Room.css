@@ -1,0 +1,92 @@
+.room-container {
+    text-align: center;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+    .room-id {
+    border-color: #92400e;
+    border-width: 3px;
+    border-radius: 10px;
+    padding:3px;
+    padding-left: 30%;
+    padding-right: 30%;
+  }
+
+  .invite-text {
+    padding: 5px;
+    color: rgb(64, 64, 64);
+  } 
+
+  .players-title {
+    padding: 20px;
+    font-size: 20px;
+  }
+
+  .players-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; 
+  }
+  
+  .players-list ul {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    list-style: none; 
+    padding: 0; 
+  }
+
+  .player-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .player-icon {
+    width: 24px; 
+    height: 24px; 
+    border-radius: 50%;
+    margin-right: 4px; 
+  }
+  
+  .players-list li {
+    border-width: 2px;
+    border-radius: 20px;
+    border-color: #92400e;
+    padding: 7px;
+    padding-right: 11px;
+    padding-left: 11px;
+    margin: 5px;
+  }
+
+  .room-code-container {
+    font-size:25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .copy-button {
+    background-color: #92400e;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .copy-button:hover {
+    background-color: #6e330d;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 150px;
+  }
+  
+  

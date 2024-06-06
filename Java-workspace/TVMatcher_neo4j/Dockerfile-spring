@@ -1,0 +1,26 @@
+# Use the default image of OpenJDK for Java 17 that includes a JDK
+FROM openjdk:17-alpine
+
+# Install maven
+RUN apk --no-cache add maven
+
+# Sets the working directory inside the container
+WORKDIR /app
+
+# Copy the pom.xml file to downloand dependencies 
+COPY pom.xml .
+
+# Download the dependencies of the Maven project
+RUN mvn dependency:go-offline
+
+# Copy all the code to the working directory
+COPY src ./src
+
+# Compile the app
+RUN mvn package -DskipTests
+
+# Exposes the port on which the application will run
+EXPOSE 8080
+
+# Run the aplication when starting the container 
+CMD ["java", "-jar", "target/tvmatcher-0.0.1-SNAPSHOT.jar"]

@@ -1,1 +1,1 @@
-*/10 * * * * python scrapper.py
+0 0 * * TUE python3 /app/scrapper.py

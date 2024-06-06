@@ -2,7 +2,6 @@ import requests
 import time
 import random
 from bs4 import BeautifulSoup
-from mongo_connection import MongoDBConnection
 from omdb_api import get_movie_info
 import os
 import re
@@ -17,30 +16,68 @@ pages = ["", *[f"?page={i}" for i in range(2, 5)]]
 
 urls = [base_url.format(provider, page) for provider in providers for page in pages]
 
-connection_string = os.getenv('MONGODB_CONNECTION_STRING')
-mongo_connection = MongoDBConnection(connection_string)
-database = mongo_connection.create_database("TVMatchDB")
-collection = mongo_connection.create_collection(database, "series_collection")  # Create collection for series
+def series_exists_in_db(title, current_platform):
+    api_endpoint = "http://springapp:8080/existence"
+    headers = {'Content-Type': 'application/json'}
 
-def series_exists(title):
-    query = {'title': title}
-    result = mongo_connection.find_document(collection, query)
-    return result
+    query_params = {'title': title}
+    try:
+        response = requests.get(api_endpoint, params=query_params, headers=headers)
+        response.raise_for_status()
+        data = response.json()
+        if data:
+            platforms = get_series_platforms(title)
+            if platforms is not None and current_platform not in platforms:
+                add_platform_to_series(title, current_platform)
+        return data 
+    except requests.RequestException as e:
+        print(f"Error checking series existence in API: {e}")
+        return False
+
+def get_series_platforms(title):
+    api_endpoint = "http://springapp:8080/series/platforms"
+    headers = {'Content-Type': 'application/json'}
+
+    query_params = {'title': title}
+    try:
+        response = requests.get(api_endpoint, params=query_params, headers=headers)
+        response.raise_for_status()
+        platforms = response.json()
+        return platforms
+    except requests.RequestException as e:
+        print(f"Error getting series platforms from API: {e}")
+        return None
+
+def add_platform_to_series(title, platform):
+    api_endpoint = "http://springapp:8080/series/platforms/add"
+    headers = {'Content-Type': 'application/json'}
+
+    query_params = {'title': title, 'platform': platform}
+    try:
+        response = requests.post(api_endpoint, params=query_params, headers=headers)
+        response.raise_for_status()
+        success = response.json()
+        if success:
+            print(f"Platform '{platform}' added to series '{title}' in the API.")
+        else:
+            print(f"Platform '{platform}' already exists for series '{title}' in the API.")
+    except requests.RequestException as e:
+        print(f"Error adding platform '{platform}' to series '{title}' in API: {e}")
+
 
 def scrape_spanish_info(title, series_url):
-
     while True:
-            try:
-                response = requests.get(series_url)
-                soup = BeautifulSoup(response.content, 'html.parser')
-                if soup.find('div', class_='title-block'):  # Check if there are info on this page
-                    break  # Exit the loop if info are found
-                else:
-                    print(f"No info found on URL: {series_url}. Retrying in 5 seconds...")
-                    time.sleep(5)  # Wait for 5 seconds before retrying
-            except requests.RequestException as e:
-                print(f"Error accessing URL: {series_url}. Retrying in 5 seconds...")
+        try:
+            response = requests.get(series_url)
+            soup = BeautifulSoup(response.content, 'html.parser')
+            if soup.find('div', class_='title-block'):  # Check if there are info on this page
+                break  # Exit the loop if info are found
+            else:
+                print(f"No info found on URL: {series_url}. Retrying in 5 seconds...")
                 time.sleep(5)  # Wait for 5 seconds before retrying
+        except requests.RequestException as e:
+            print(f"Error accessing URL: {series_url}. Retrying in 5 seconds...")
+            time.sleep(5)  # Wait for 5 seconds before retrying
 
     title_block_div = soup.find('div', class_='title-block')
 
@@ -65,13 +102,14 @@ def scrape_spanish_info(title, series_url):
     # Extract year
     year_elem = soup.find('span', class_='text-muted')
     year = year_elem.text.strip() if year_elem else None
-
+    
     # Extract genres
-    genres_div = None
+    genres_span = None
     previous_h3 = soup.find('h3', class_='detail-infos__subheading', string='Géneros')
     if previous_h3:
-        genres_div = previous_h3.find_next_sibling('div', class_='detail-infos__value')
-        genres = [genre.strip() for genre in genres_div.text.split(',')] if genres_div else None 
+        genres_div = previous_h3.find_next_sibling('div')
+        genres_span = genres_div.find('span', class_='detail-infos__value') if genres_div else None
+        genres = [genre.strip() for genre in genres_span.text.split(',')] if genres_span else None
 
     # Extract production country
     production_country_div = None
@@ -117,26 +155,20 @@ def scrape_spanish_info(title, series_url):
 
     return original_title, year, genres, production_country, sinopsis_text
 
-# Function to extract series titles from multiple URLs and insert series information into the database
-# Function to insert or update series info into the database
-def insert_or_update_series(series_doc):
-    title = series_doc['title']
-    existing_series = series_exists(title)
-    if existing_series:
-        # Series already exists, update it
-        mongo_connection.update_document(collection, {'_id': existing_series['_id']}, series_doc)
-    else:
-        # Series is new, insert it
-        mongo_connection.insert_series(collection, series_doc)
+def insert_series_to_api(series_dict):
+    api_endpoint = "http://springapp:8080/series"  
+    headers = {'Content-Type': 'application/json'}
 
-    # Update the insertion time for each platform
-    for platform in series_doc['platforms']:
-        mongo_connection.update_document(collection, {'title': title}, {'$set': {f'tiempo_insercion_{platform}': datetime.now()}})
+    try:
+        response = requests.post(api_endpoint, json=series_dict, headers=headers)
+        response.raise_for_status()  # Raise an exception for bad status codes
+        print(f"Series '{series_dict['title']}' successfully inserted into the API.")
+    except requests.RequestException as e:
+        print(f"Error inserting series '{series_dict['title']}' to API: {e}")
 
-# Function to extract series titles from multiple URLs and insert series information into the database
 def extract_and_insert_series_info(urls):
     for url in urls:
-        print(urls)
+        platform = url.split("/")[-2]  
         print(url)
         while True:
             try:
@@ -152,76 +184,39 @@ def extract_and_insert_series_info(urls):
                 time.sleep(5)  # Wait for 5 seconds before retrying
 
         for link in soup.find_all('a', class_='title-list-grid__item--link'):
-            series_url = "https://www.justwatch.com" + link.get('href') 
+            series_url = "https://www.justwatch.com" + link.get('href')
             print(series_url)
             
             # Extract title from img alt attribute
             img_tag = link.find('img', class_='picture-comp__img')
             title = img_tag.get('alt') if img_tag else None
             print(title)
-            
-            # Check if series already exists in the database
-            existing_series = series_exists(title)
-            if existing_series:
-                print(f"Series '{title}' already exists in the database. ")
-                # Add platform to the existing series document
-                platform = url.split("/")[-2]
-                platforms = existing_series.get('platforms', [])
-                if platform not in platforms:
-                    platforms.append(platform)
-                # Update the existing series document with the new platforms data
-                mongo_connection.update_document(collection, {'_id': existing_series['_id']}, {'$set': {'platforms': platforms}})
-                mongo_connection.update_document(collection, {'title': title}, {'$set': {f'tiempo_insercion_{platform}': datetime.now()}})
-                continue
 
-            # Get Spanish information for the series
+            if series_exists_in_db(title, platform):  
+                print(f"Series '{title}' already exists in the database for platform '{platform}'. Skipping extraction...")
+                continue
+            
             original_title, year, genres, production_country, sinopsis_text = scrape_spanish_info(title, series_url)
 
             # Get series information from OMDB API
             poster_url, rated = get_movie_info(original_title, "a1af39b")
 
-            platform = url.split("/")[-2]
-            platforms = [platform]
-
-            # Prepare series document
-            series_doc = {
+            print(genres);
+            # Prepare series dictionary
+            series_dict = {
                 'title': title,
                 'original_title': original_title,
                 'year': year,
                 'genres': genres,
                 'plot': sinopsis_text,
-                'production_country':production_country,
+                'production_country': production_country,
                 'rated': rated,
                 'poster_url': poster_url,
-                'platforms': platforms
+                'platforms': [platform] 
             }
 
-            # Insert or update series info into the database
-            insert_or_update_series(series_doc)
+            insert_series_to_api(series_dict)
 
             time.sleep(random.uniform(1, 2))
 
-
-# Function to remove outdated platforms and series from the database
-def remove_outdated_platforms():
-    for series in collection.find():
-        platforms = series.get('platforms', [])
-        for platform in platforms:
-            insertion_time_key = f'tiempo_insercion_{platform}'
-            if insertion_time_key in series:
-                insertion_time = series[insertion_time_key]
-                if datetime.now() - insertion_time > timedelta(days=4):
-                    platforms.remove(platform)
-                    # If the series has no more platforms, remove it from the database
-                    if not platforms:
-                        collection.delete_one({'_id': series['_id']})
-                    else:
-                        # Update the series document with the updated platforms list
-                        mongo_connection.update_document(collection, {'_id': series['_id']}, {'$set': {'platforms': platforms}})
-                    break
-
-# Execute the extraction and insertion process
 extract_and_insert_series_info(urls)
-
-# Remove outdated platforms and series from the database
-remove_outdated_platforms()

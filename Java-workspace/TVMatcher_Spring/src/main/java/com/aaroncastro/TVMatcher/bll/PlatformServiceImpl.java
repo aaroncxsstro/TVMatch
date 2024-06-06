@@ -45,7 +45,8 @@ public class PlatformServiceImpl implements PlatformService {
 
         if (!genres.isEmpty()) {
             List<String> modifiedGenres = genres.stream()
-                    .map(genre -> genre.replace("y", " & "))
+            		.map(genre -> genre.replace("_", " "))
+                    .map(genre -> genre.replace("-y-", " & "))
                     .collect(Collectors.toList());
 
             filteredShows = filteredShows.stream()

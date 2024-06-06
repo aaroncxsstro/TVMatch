@@ -13,5 +13,21 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/platforms/all").allowedOrigins("*");
         registry.addMapping("/platforms/{id}").allowedOrigins("*");
         registry.addMapping("/platforms/filtered").allowedOrigins("*");
+
+        registry.addMapping("/api/rooms/create").allowedOrigins("*");
+        registry.addMapping("/api/rooms/delete/{codigo}").allowedOrigins("*");
+        registry.addMapping("/api/rooms/join/{codigo}").allowedOrigins("*"); 
+        registry.addMapping("/api/rooms/update-series").allowedOrigins("*");
+        registry.addMapping("/api/rooms/players/{codigo}").allowedOrigins("*");
+        registry.addMapping("/api/rooms/exists/{codigo}").allowedOrigins("*");
+        registry.addMapping("/api/rooms/leave/{codigo}").allowedOrigins("*");
+        registry.addMapping("/api/rooms/update-state/{codigo}").allowedOrigins("*");
+        registry.addMapping("/api/rooms/state/{codigo}").allowedOrigins("*");
+        registry.addMapping("/api/rooms/{codigo}").allowedOrigins("*");
+        
+        registry.addMapping("/api/players/get/{token}").allowedOrigins("*");
+        registry.addMapping("/api/players/create").allowedOrigins("*");
+        registry.addMapping("/api/players/exists/{token}").allowedOrigins("*");
+        registry.addMapping("/api/players/addSeriesAndSeriesPartida/{googleUserId}").allowedOrigins("*");
     }
 }
