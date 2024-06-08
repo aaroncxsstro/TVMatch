@@ -127,7 +127,7 @@ const Create = () => {
       });
 
       if (createRoomResponse.ok) {
-        console.log('Sala creada exitosamente.');
+        
       } else {
         console.error('Error al crear la sala:', createRoomResponse.status);
       }
@@ -144,7 +144,7 @@ const Create = () => {
     if (!unlikeResponse.ok) {
       throw new Error('Error unliking all series: ' + unlikeResponse.statusText);
     } else {
-      console.log('All series unliked successfully.');
+
     }
   }
 

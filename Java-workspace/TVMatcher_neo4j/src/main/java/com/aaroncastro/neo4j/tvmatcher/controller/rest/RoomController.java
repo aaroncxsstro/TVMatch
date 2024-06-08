@@ -99,50 +99,7 @@ public class RoomController {
         }
     }
     
-    @PostMapping("/room/{codigo}/checkTotalMatch")
-    public ResponseEntity<Map<String, Object>> checkTotalMatch(@PathVariable String codigo, @RequestBody List<String> seriesTitles) {
-        List<String> totalMatchTitles = new ArrayList<>();
-
-        for (String seriesTitle : seriesTitles) {
-            System.out.println("codigo: " + codigo);
-            System.out.println("seriesTitle: " + seriesTitle);
-
-            String query = "MATCH (s:Series {title: $seriesTitle})<-[:LIKES]-(p:Player)-[:PLAYS_IN]->(r:Room {codigo: $codigo}) "
-                    + "RETURN count(p) as playerCount";
-
-            System.out.println("Query 1: " + query);
-
-            Long playerCount = neo4jClient.query(query)
-                    .bind(codigo).to("codigo")
-                    .bind(seriesTitle).to("seriesTitle")
-                    .fetchAs(Long.class)
-                    .mappedBy((typeSystem, record) -> record.get("playerCount").asLong())
-                    .one()
-                    .orElse(0L);
-
-            System.out.println("Query 1 - playerCount: " + playerCount);
-
-            String totalPlayersQuery = "MATCH (r:Room {codigo: $codigo})<-[:PLAYS_IN]-(p:Player) "
-                    + "RETURN count(p) as totalPlayerCount";
-
-            System.out.println("Query 2: " + totalPlayersQuery);
-
-            Long totalPlayerCount = neo4jClient.query(totalPlayersQuery)
-                    .bind(codigo).to("codigo")
-                    .fetchAs(Long.class)
-                    .mappedBy((typeSystem, record) -> record.get("totalPlayerCount").asLong())
-                    .one()
-                    .orElse(0L);
-
-            System.out.println("Query 2 - totalPlayerCount: " + totalPlayerCount);
-
-            if (playerCount.equals(totalPlayerCount) && totalPlayerCount > 0) {
-                totalMatchTitles.add(seriesTitle);
-            }
-        }
-
-        return ResponseEntity.ok(Map.of("totalMatchTitles", totalMatchTitles));
-    }
+    
 
     @PostMapping("/room/{codigo}/partialMatches")
     public ResponseEntity<Map<String, Object>> getPartialMatches(@PathVariable String codigo, @RequestBody Map<String, Object> requestBody) {

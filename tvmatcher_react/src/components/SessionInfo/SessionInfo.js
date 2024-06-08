@@ -19,8 +19,6 @@ const SessionInfo = () => {
         .then(data => {
           setUser(data);
           setLoading(false);
-          console.log(data.name);
-          console.log(data.picture);
         })
         .catch(error => {
           console.error('Error fetching user data:', error);

@@ -28,9 +28,6 @@ const Room = () => {
       .then(data => {
         setUserName(data.name);
         
-        fetch(`http://localhost:8080/players/find/${googleUserId}`)
-          .then(response => response.json())
-          .then(playerData => {
             
             setTimeout(() => {
               fetch(`http://localhost:8080/players/joinRoom?googleUserId=${googleUserId}&Codigo=${id}`, {
@@ -41,7 +38,6 @@ const Room = () => {
               })
               .then(response => response.json())
               .then(data => {
-                console.log(data.message);
                 intervalId = setInterval(() => {
                   fetch(`http://localhost:8080/room/${id}/players`)
                     .then(response => response.json())
@@ -87,18 +83,14 @@ const Room = () => {
           .catch(error => {
             console.error('Error fetching player data:', error);
           });
-      })
-      .catch(error => {
-        console.error('Error fetching user data:', error);
-      });
     }
   
     const cleanupFunction = async () => {
+      clearInterval(intervalId);
       try {
         const stateResponse = await fetch(`http://localhost:8080/room/state/${id}`);
         const state = await stateResponse.text();
         if (state === 'Juego') {
-          console.log('El estado es "Juego". No se realizará ninguna acción.');
           return;
         }
     
@@ -113,7 +105,6 @@ const Room = () => {
         if (!response.ok) {
           throw new Error('Error removing player from room: ' + response.statusText);
         } else {
-          console.log('Player removed from room successfully.');
         }
     
         const roomPlayersResponse = await fetch(`http://localhost:8080/room/${id}/players`);
@@ -125,7 +116,6 @@ const Room = () => {
           });
     
           if (deleteRoomResponse.ok) {
-            console.log('Room deleted successfully.');
           } else {
             throw new Error('Error deleting room: ' + deleteRoomResponse.statusText);
           }
@@ -134,7 +124,7 @@ const Room = () => {
         console.error('An error occurred:', error);
       }
     
-      clearInterval(intervalId);
+      
     };
   
     const handleBeforeUnload = (event) => {

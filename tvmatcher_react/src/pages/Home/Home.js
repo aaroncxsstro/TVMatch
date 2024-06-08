@@ -62,7 +62,6 @@ const Home = () => {
       if (!unlikeResponse.ok) {
         throw new Error('Error unliking all series: ' + unlikeResponse.statusText);
       } else {
-        console.log('All series unliked successfully.');
       }
 
       const response = await fetch(`http://localhost:8080/room/exists/${joinCode}`);

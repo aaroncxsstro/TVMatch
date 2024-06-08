@@ -20,6 +20,9 @@ const Game = () => {
   const [numPlayers, setNumPlayers] = useState(0);
   const [completedPlayers, setCompletedPlayers] = useState(0);
   const [starIconState, setStarIconState] = useState("grayscale(1)");
+  const [favoritedSeriesTitles, setFavoritedSeriesTitles] = useState([]);
+  const [totalMatches, setTotalMatches] = useState([]);
+  const [currentTotalMatchIndex, setCurrentTotalMatchIndex] = useState(0);
 
   useEffect(() => {
     fetchSeriesData();
@@ -28,6 +31,7 @@ const Game = () => {
     const interval = setInterval(fetchGameData, 5000);
 
     const cleanupFunction = async () => {
+      clearInterval(interval);
       try {
         const googleUserId = localStorage.getItem('googleUserId');
 
@@ -38,7 +42,6 @@ const Game = () => {
         if (!unlikeResponse.ok) {
           throw new Error('Error unliking all series: ' + unlikeResponse.statusText);
         } else {
-          console.log('All series unliked successfully.');
         }
 
         const leaveRoomResponse = await fetch(`http://localhost:8080/players/leaveRoom/${id}`, {
@@ -52,7 +55,6 @@ const Game = () => {
         if (!leaveRoomResponse.ok) {
           throw new Error('Error removing player from room: ' + leaveRoomResponse.statusText);
         } else {
-          console.log('Player removed from room successfully.');
         }
 
         const roomPlayersResponse = await fetch(`http://localhost:8080/room/${id}/players`);
@@ -64,7 +66,6 @@ const Game = () => {
           });
 
           if (deleteRoomResponse.ok) {
-            console.log('Room deleted successfully.');
           } else {
             throw new Error('Error deleting room: ' + deleteRoomResponse.statusText);
           }
@@ -86,7 +87,6 @@ const Game = () => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
       cleanupFunction();
-      clearInterval(interval);
     };
 
     
@@ -107,7 +107,7 @@ const Game = () => {
       const isFavorite = await response.json();
       setStarIconState(isFavorite ? 'grayscale(0)' : 'grayscale(1)');
     } catch (error) {
-      console.error('Error fetching favorite status:', error);
+      
     }
   };
 
@@ -151,7 +151,6 @@ const Game = () => {
       const response = await fetch(`http://localhost:8080/room/${id}/creator`);
       const creatorId = await response.text();
       setCreatorId(creatorId);
-      console.log(numPlayers)
       if (!response.ok) {
         throw new Error('Failed to fetch creator ID');
       }
@@ -179,7 +178,6 @@ const Game = () => {
         throw new Error('Network response was not ok.');
       })
       .then(data => {
-        console.log('Fetched room data:', data);
         const chunks = chunkArray(data, 30);
         const shuffledChunks = chunks.map(chunk => shuffleArray(chunk));
         setSeriesChunks(shuffledChunks);
@@ -221,10 +219,10 @@ const Game = () => {
   const handleButtonClick = async (action) => {
     const currentChunk = seriesChunks[currentChunkIndex];
     const currentSeries = currentChunk[currentSeriesIndex];
-
+  
     if (currentSeries) {
       const googleUserId = localStorage.getItem('googleUserId');
-
+  
       if (action === 'like') {
         try {
           const response = await fetch(`http://localhost:8080/players/likeSeries/${googleUserId}`, {
@@ -234,14 +232,47 @@ const Game = () => {
             },
             body: currentSeries.title
           });
-
+  
           if (!response.ok) {
             throw new Error('Failed to add series to player.');
           }
+          if(numPlayers>1){
+          setFavoritedSeriesTitles(prevTitles => [...prevTitles, currentSeries.title]);
+  
+          // Obtener coincidencias totales
+          const myString = JSON.stringify(favoritedSeriesTitles);
+          const response2 = await fetch(`http://localhost:8080/players/checkSeriesLikes/${id}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: myString
+          });
+  
+          if (response2.ok) {
+            const matchedSeries = await response2.json();
+          
+  
+            setTotalMatches(matchedSeries);
+
+            // Obtener títulos de matchedSeries
+            const matchedSeriesTitles = matchedSeries.map(series => series.title);
+
+            // Filtrar las series favoritas para eliminar las que ya han sido devueltas
+            setFavoritedSeriesTitles(prevTitles =>
+              prevTitles.filter(title => !matchedSeriesTitles.includes(title))
+            );
+          } else {
+            throw new Error('Failed to check for total matches.');
+          }
+        }
         } catch (error) {
           console.error('Error processing like:', error);
         }
+      
       }
+      
+  
 
       const nextSeriesIndex = currentSeriesIndex + 1;
       if (nextSeriesIndex < currentChunk.length) {
@@ -254,7 +285,7 @@ const Game = () => {
           setCurrentSeriesIndex(0);
           setShowPartialMatches(true);
         } else {
-          console.log('All chunks are processed.');
+
         }
 
         try {
@@ -295,7 +326,6 @@ const Game = () => {
       });
 
       const matchData = await response.json();
-      console.log(matchData);
       if (matchData.partialMatches.length > 0) {
         setPartialMatches(matchData.partialMatches);
       }
@@ -413,8 +443,20 @@ const Game = () => {
     }
   };
 
+  const handleContinueTotal = async () => {
+    setTotalMatches(prevTotalMatches => prevTotalMatches.slice(1));
+  }
+
+  const exitRoom = () => {
+    navigate(`/home`);
+  }
+
   return (
     <div className="game-container">
+      <div className="exit-button">
+      <CustomButton onClick={exitRoom}>Salir del juego</CustomButton>
+      </div>
+
       <div className="series-card" {...swipeHandlers}>
       <div
           className="image-container"
@@ -489,6 +531,18 @@ const Game = () => {
           </div>
         </div>
       )}
+      {totalMatches.length > 0 && (
+        <div className="overlay-background">
+          <div className="total-matches-overlay">
+              <div className="total-match">
+               <p>¡{totalMatches[0].title} es un MATCH!</p> 
+               <img src={totalMatches[0].poster_url !== "N/A" ? totalMatches[0].poster_url : ImageNotFound} alt={totalMatches[0].title} />
+              </div>
+              <CustomButton onClick={handleContinueTotal}>Continuar partida</CustomButton>
+            </div>
+          </div>
+      )}
+
     </div>
   );
 };

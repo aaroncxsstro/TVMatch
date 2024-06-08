@@ -16,7 +16,6 @@ public class Favorites {
     @TargetNode
     private Series series;
 
-    @TargetNode
     private Player player;
 
 

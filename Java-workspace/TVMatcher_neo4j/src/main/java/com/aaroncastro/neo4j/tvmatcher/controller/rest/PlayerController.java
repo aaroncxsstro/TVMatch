@@ -1,6 +1,7 @@
 package com.aaroncastro.neo4j.tvmatcher.controller.rest;
 
 import com.aaroncastro.neo4j.tvmatcher.model.Player;
+import com.aaroncastro.neo4j.tvmatcher.model.Room;
 import com.aaroncastro.neo4j.tvmatcher.model.Series;
 import com.aaroncastro.neo4j.tvmatcher.dao.PlayerRepository;
 import com.aaroncastro.neo4j.tvmatcher.dao.RoomRepository;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -256,6 +258,63 @@ public class PlayerController {
         } catch (Exception e) {
             return false;
         }
+    }
+    
+    @PostMapping("/checkSeriesLikes/{codigo}")
+    public ResponseEntity<List<Series>> checkSeriesLikes(@PathVariable String codigo, @RequestBody List<String> seriesTitles) {
+        List<Series> seriesWithEqualLikesToPlayers = new ArrayList<>();
+
+        for (String title : seriesTitles) {
+            String countLikesQuery = "MATCH (:Room {codigo: $codigo})<-[:PLAYS_IN]-(p:Player)-[:LIKES]->(s:Series {title: $title}) RETURN COUNT(p) as likesCount";
+            Map<String, Object> parameters = Map.of(
+                    "codigo", codigo,
+                    "title", title
+            );
+
+            try {
+                Integer likesCount = neo4jClient.query(countLikesQuery)
+                        .bindAll(parameters)
+                        .fetchAs(Integer.class)
+                        .one()
+                        .get();
+
+                Map<String, Object> parameters2 = Map.of(
+                        "codigo", codigo
+                );
+
+                int playersCount = neo4jClient.query("MATCH (:Room {codigo: $codigo})<-[:PLAYS_IN]-(:Player) RETURN COUNT(*) as playersCount")
+                        .bindAll(parameters2)
+                        .fetchAs(Integer.class)
+                        .one()
+                        .get();
+
+                System.out.println(playersCount);
+                System.out.println(likesCount);
+                // Si el número de likes es igual al número de jugadores, buscar y agregar la serie a la lista de retorno
+                if (likesCount.equals(playersCount)) {
+                    String seriesQuery = "MATCH (s:Series {title: $title}) RETURN s";
+                    Series seriesResult = neo4jClient.query(seriesQuery)
+                            .bindAll(parameters)
+                            .fetchAs(Series.class)
+                            .mappedBy((typeSystem, record) -> {
+                                Series s = new Series();
+                                s.setPoster_url(record.get("s").get("poster_url").asString());
+                                s.setTitle(record.get("s").get("title").asString());
+                                s.setPlatforms(record.get("s").get("platforms").asList(Value::asString));
+                                return s;
+                            })
+                            .one()
+                            .orElse(null);
+
+                    if (seriesResult != null) {
+                        seriesWithEqualLikesToPlayers.add(seriesResult);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return ResponseEntity.ok(seriesWithEqualLikesToPlayers);
     }
 
 

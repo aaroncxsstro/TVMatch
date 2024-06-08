@@ -15,7 +15,6 @@ const SerieDetail = () => {
       try {
         const response = await axios.get(`http://localhost:8080/series/${id}`);
         setSerie(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching serie:', error);
       }

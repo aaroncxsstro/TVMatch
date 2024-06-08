@@ -19,9 +19,7 @@ const Login = () => {
 
   const handleLoginSuccess = async (response) => {
     try {
-      console.log('Login Successful:', response);
       login(response.access_token);
-      console.log('Token saved in localStorage:', localStorage.getItem('authToken'));
   
       setLoading(true);
       if (response.access_token) {
@@ -33,7 +31,6 @@ const Login = () => {
           .then(response => response.json())
           .then(data => {
             const { sub: googleUserId, name, picture } = data; 
-            console.log('User Data:', googleUserId, name, picture);
             localStorage.setItem('googleUserId', googleUserId);
             createNewUser(googleUserId, name, picture);
           })
@@ -76,7 +73,7 @@ const Login = () => {
       if (!createResponse.ok) {
         console.error('Error creating user:', createResponse.statusText);
       } else {
-        console.log('User created successfully.');
+ 
       }
       setLoading(false);
       navigate('/home');

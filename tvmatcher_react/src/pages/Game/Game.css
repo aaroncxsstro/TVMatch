@@ -4,6 +4,14 @@
   align-items: center;
   height: 100vh;
   background-color: #f0f0f0;
+  align-items: center;
+  flex-direction: column;
+}
+
+.exit-button {
+  position:absolute;
+  top:20px;
+  right: 20px;
 }
 
 .series-card {
@@ -177,11 +185,11 @@
 }
 
 .swipe-left {
-  transform: translateX(-100%); /* Desliza hacia la izquierda */
+  transform: translateX(-120vw); /* Desliza hacia la izquierda */
 }
 
 .swipe-right {
-  transform: translateX(100%); /* Desliza hacia la derecha */
+  transform: translateX(120vw); /* Desliza hacia la derecha */
 }
 
 .swipe-curtain {
@@ -217,4 +225,34 @@
 
 .continue-button button{
   margin: 10px
+}
+
+.total-matches-overlay {
+  background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 90%;
+    overflow: auto;
+    z-index: 9998;
+    display:flex;
+    flex-direction: column;
+}
+
+.total-match > p {
+font-weight: bold;
+font-size: 130%;
+margin-bottom: 10px;
+color: #92400e;;
+}
+
+.total-match {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center;
+  text-align: center;
+}
+
+.total-match ~ button {
+  margin-top: 10px;
 }
