@@ -16,7 +16,7 @@ TVMatch es una aplicación destinada a poner de acuerdo a aquellos que quieren v
 </div>
 
 
-## About The Project
+## Sobre el proyecto
 
 <div align="center">
   <img src="MEDIA/Inicio.png" alt="Inicio" width="959" height="453">
