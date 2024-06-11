@@ -10,5 +10,4 @@ RUN pip install -r requirements.txt
 
 RUN chmod 0655 /app/scrapper.py
 
-# Iniciar el cron después de ejecutar el scrapper
 CMD python3 /app/scrapper.py && crond -l 2 -f

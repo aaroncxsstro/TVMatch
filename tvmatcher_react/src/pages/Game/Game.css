@@ -179,17 +179,16 @@
 }
 
 .series-card {
-  /* Agrega propiedades de estilo para la tarjeta de serie */
   position: relative;
-  transition: transform 0.3s ease; /* Transición suave para el deslizamiento */
+  transition: transform 0.3s ease;
 }
 
 .swipe-left {
-  transform: translateX(-120vw); /* Desliza hacia la izquierda */
+  transform: translateX(-120vw);
 }
 
 .swipe-right {
-  transform: translateX(120vw); /* Desliza hacia la derecha */
+  transform: translateX(120vw); 
 }
 
 .swipe-curtain {
